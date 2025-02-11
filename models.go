@@ -130,3 +130,11 @@ type KlineData struct {
 	Close     float64 `json:"close"`
 	Volume    float64 `json:"volume"`
 }
+
+type TickerData struct {
+	Symbol    string  `json:"symbol"`
+	LastPrice float64 `json:"lastPrice"`
+}
+
+// symbol -> last price
+type Tickers map[string]float64

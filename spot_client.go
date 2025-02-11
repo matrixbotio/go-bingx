@@ -301,3 +301,30 @@ func (c *SpotClient) GetHistoricalKlines(
 	}
 	return result, nil
 }
+
+func (c *SpotClient) GetTickers() (Tickers, error) {
+	endpoint := "/openApi/spot/v1/ticker/24hr "
+	params := map[string]interface{}{
+		"timestamp": time.Now().UnixMilli(),
+	}
+
+	resp, err := c.client.sendRequest("GET", endpoint, params)
+	if err != nil {
+		return nil, fmt.Errorf("send: %w", err)
+	}
+
+	var response BingXResponse[[]TickerData]
+	err = json.Unmarshal(resp, &response)
+	if err != nil {
+		return nil, fmt.Errorf("decode: %w", err)
+	}
+	if err := response.Error(); err != nil {
+		return nil, err
+	}
+
+	result := Tickers{}
+	for _, ticker := range response.Data {
+		result[ticker.Symbol] = ticker.LastPrice
+	}
+	return result, nil
+}
