@@ -302,10 +302,13 @@ func (c *SpotClient) GetHistoricalKlines(
 	return result, nil
 }
 
-func (c *SpotClient) GetTickers() (Tickers, error) {
+func (c *SpotClient) GetTickers(symbol ...string) (Tickers, error) {
 	endpoint := "/openApi/spot/v1/ticker/24hr "
 	params := map[string]interface{}{
 		"timestamp": time.Now().UnixMilli(),
+	}
+	if len(symbol) > 0 {
+		params["symbol"] = symbol[0]
 	}
 
 	resp, err := c.client.sendRequest("GET", endpoint, params)
