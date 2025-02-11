@@ -109,19 +109,19 @@ type SymbolInfos struct {
 }
 
 type SymbolInfo struct {
-	Symbol       string  `json:"symbol"`       // 交易对符号
-	TickSize     float64 `json:"tickSize"`     // 最小价格变动单位
-	StepSize     float64 `json:"stepSize"`     // 最小交易单位
-	MinQty       float64 `json:"minQty"`       // 最小下单量
-	MaxQty       float64 `json:"maxQty"`       // 最大下单量
-	MinNotional  float64 `json:"minNotional"`  // 最小名义价值
-	MaxNotional  float64 `json:"maxNotional"`  // 最大名义价值
-	Status       int     `json:"status"`       // 状态标识
-	ApiStateBuy  bool    `json:"apiStateBuy"`  // 买入API状态
-	ApiStateSell bool    `json:"apiStateSell"` // 卖出API状态
-	TimeOnline   int64   `json:"timeOnline"`   // 上线时间 (Unix时间戳)
-	OffTime      int64   `json:"offTime"`      // 下线时间 (Unix时间戳)
-	MaintainTime int64   `json:"maintainTime"` // 维护时间 (秒)
+	Symbol       string  `json:"symbol"`
+	TickSize     float64 `json:"tickSize"`
+	StepSize     float64 `json:"stepSize"`
+	MinQty       float64 `json:"minQty"`
+	MaxQty       float64 `json:"maxQty"`
+	MinNotional  float64 `json:"minNotional"`
+	MaxNotional  float64 `json:"maxNotional"`
+	Status       int     `json:"status"`
+	ApiStateBuy  bool    `json:"apiStateBuy"`
+	ApiStateSell bool    `json:"apiStateSell"`
+	TimeOnline   int64   `json:"timeOnline"`
+	OffTime      int64   `json:"offTime"`
+	MaintainTime int64   `json:"maintainTime"`
 }
 
 type KlineDataRaw []float64
