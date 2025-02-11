@@ -112,15 +112,9 @@ type SymbolInfo struct {
 	Symbol       string  `json:"symbol"`
 	TickSize     float64 `json:"tickSize"`
 	StepSize     float64 `json:"stepSize"`
-	MinQty       float64 `json:"minQty"`
-	MaxQty       float64 `json:"maxQty"`
 	MinNotional  float64 `json:"minNotional"`
 	MaxNotional  float64 `json:"maxNotional"`
 	Status       int     `json:"status"`
-	ApiStateBuy  bool    `json:"apiStateBuy"`
-	ApiStateSell bool    `json:"apiStateSell"`
-	TimeOnline   int64   `json:"timeOnline"`
-	OffTime      int64   `json:"offTime"`
 	MaintainTime int64   `json:"maintainTime"`
 }
 
