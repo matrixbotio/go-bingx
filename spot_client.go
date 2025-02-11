@@ -135,6 +135,31 @@ func (c *SpotClient) CancelOrder(symbol string, orderId string) error {
 	return nil
 }
 
+func (c *SpotClient) CancelOrderByClientOrderID(
+	symbol string,
+	clientOrderID string,
+) error {
+	endpoint := "/openApi/spot/v1/trade/cancel"
+	params := map[string]interface{}{
+		"symbol":        symbol,
+		"clientOrderID": clientOrderID,
+	}
+
+	resp, err := c.client.sendRequest("POST", endpoint, params)
+	if err != nil {
+		return err
+	}
+	var bingXResponse BingXResponse[any]
+	err = json.Unmarshal(resp, &bingXResponse)
+	if err != nil {
+		return err
+	}
+	if err := bingXResponse.Error(); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *SpotClient) CancelAllOpenOrders(symbol string) error {
 	endpoint := "/openApi/spot/v1/trade/cancelOpenOrders"
 	params := map[string]interface{}{
