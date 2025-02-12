@@ -1,6 +1,11 @@
 package bingxgo
 
-import "errors"
+import (
+	"bytes"
+	"compress/gzip"
+	"errors"
+	"io"
+)
 
 func parseKlineData(data KlineDataRaw, interval string) (KlineData, error) {
 	if len(data) < 8 {
@@ -17,4 +22,19 @@ func parseKlineData(data KlineDataRaw, interval string) (KlineData, error) {
 		Close:     data[4],
 		Volume:    data[7],
 	}, nil
+}
+
+func DecodeGzip(data []byte) ([]byte, error) {
+	reader, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+
+	decodedMsg, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, err
+	}
+
+	return decodedMsg, nil
 }
