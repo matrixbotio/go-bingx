@@ -133,17 +133,19 @@ func WsKlineServe(
 }
 
 type WsOrder struct {
+	TransactionID string        `json:"t"`
 	Symbol        string        `json:"s"`
 	Side          SideType      `json:"S"`
 	OrderType     OrderType     `json:"o"`
 	Price         string        `json:"p"`
 	AveragePrice  string        `json:"ap"`
 	Quantity      string        `json:"q"`
+	Amount        string        `json:"Q"`
 	StopPrice     string        `json:"sp"`
 	Status        OrderStatus   `json:"X"`
-	Spec          OrderSpecType `json:"x"`
+	EventType     OrderSpecType `json:"x"`
 	Timestamp     int           `json:"T"`
-	OrderId       int           `json:"i"`
+	OrderID       int           `json:"i"`
 	ClientOrderID string        `json:"c"`
 }
 
