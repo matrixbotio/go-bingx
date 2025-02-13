@@ -16,17 +16,19 @@ import (
 )
 
 type Client struct {
-	ApiKey      string
-	SecretKey   string
-	BaseURL     string
 	HTTPClient  *http.Client
-	Debug       bool
 	rateLimiter *RateLimiter
+
+	APIKey          string
+	SecretKey       string
+	BaseURL         string
+	Debug           bool
+	BrokerSourceKey string
 }
 
 func NewClient(apiKey, secretKey string) *Client {
 	return &Client{
-		ApiKey:     apiKey,
+		APIKey:     apiKey,
 		SecretKey:  secretKey,
 		BaseURL:    "https://open-api.bingx.com",
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
@@ -34,8 +36,14 @@ func NewClient(apiKey, secretKey string) *Client {
 	}
 }
 
-func (c *Client) SetRateLimiter(rateLimiter *RateLimiter) {
+func (c *Client) SetRateLimiter(rateLimiter *RateLimiter) *Client {
 	c.rateLimiter = rateLimiter
+	return c
+}
+
+func (c *Client) SetBrokerSourceKey(key string) *Client {
+	c.BrokerSourceKey = key
+	return c
 }
 
 func (c *Client) sendRequest(
@@ -121,7 +129,10 @@ func (c *Client) executeRequest(method, url string) ([]byte, error) {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
 
-	req.Header.Set("X-BX-APIKEY", c.ApiKey)
+	req.Header.Set("X-BX-APIKEY", c.APIKey)
+	if c.BrokerSourceKey != "" {
+		req.Header.Set("X-SOURCE-KEY", c.BrokerSourceKey)
+	}
 
 	if c.Debug {
 		log.Printf("Request Headers: %v", req.Header)
