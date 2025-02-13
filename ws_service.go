@@ -47,7 +47,8 @@ type WsKlineEvent struct {
 	High      float64 `json:"h"`
 	Low       float64 `json:"l"`
 	Volume    float64 `json:"v"`
-	Time      float64 `json:"T"`
+	StartTime float64 `json:"t"`
+	EndTime   float64 `json:"T"`
 	Completed bool
 }
 
@@ -102,7 +103,7 @@ func WsKlineServe(
 				High:      h,
 				Low:       l,
 				Volume:    v,
-				Time:      t,
+				EndTime:   t,
 				Completed: false,
 			}
 
@@ -110,7 +111,7 @@ func WsKlineServe(
 				lastEvent = event
 			}
 
-			if lastEvent.Time != event.Time {
+			if lastEvent.EndTime != event.EndTime {
 				lastEvent.Completed = true
 			}
 
