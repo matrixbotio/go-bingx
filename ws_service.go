@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	baseWsUrl        = "wss://open-api-swap.bingx.com/swap-market"
-	baseAccountWsUrl = "wss://open-api-swap.bingx.com/swap-market?listenKey="
+	baseWsUrl        = "wss://open-api-ws.bingx.com/market"
+	baseAccountWsUrl = "wss://open-api-ws.bingx.com/market?listenKey="
 )
 
 func getWsEndpoint() string {
