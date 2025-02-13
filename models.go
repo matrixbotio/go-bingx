@@ -2,6 +2,73 @@ package bingxgo
 
 import "fmt"
 
+// Side type of order
+type SideType string
+
+// PositionSide type of order
+type PositionSideType string
+
+// Type of order
+type OrderType string
+
+type OrderStatus string
+
+type OrderSpecType string
+
+type OrderWorkingType string
+
+type Interval string
+
+const (
+	Interval1  Interval = "1m"
+	Interval3  Interval = "3m"
+	Interval5  Interval = "5m"
+	Interval15 Interval = "15m"
+	Interval30 Interval = "30m"
+
+	Interval60  Interval = "1h"
+	Interval2h  Interval = "2h"
+	Interval4h  Interval = "4h"
+	Interval6h  Interval = "6h"
+	Interval8h  Interval = "8h"
+	Interval12h Interval = "12h"
+
+	Interval1d Interval = "1d"
+	Interval3d Interval = "3d"
+
+	Interval1w Interval = "1w"
+
+	Interval1M Interval = "1M"
+)
+
+const (
+	BuySideType  SideType = "BUY"
+	SellSideType SideType = "SELL"
+
+	ShortPositionSideType PositionSideType = "SHORT"
+	LongPositionSideType  PositionSideType = "LONG"
+	BothPositionSideType  PositionSideType = "BOTH"
+
+	LimitOrderType  OrderType = "LIMIT"
+	MarketOrderType OrderType = "MARKET"
+
+	NewOrderStatus             OrderStatus = "NEW"
+	PartiallyFilledOrderStatus OrderStatus = "PARTIALLY_FILLED"
+	FilledOrderStatus          OrderStatus = "FILLED"
+	CanceledOrderStatus        OrderStatus = "CANCELED"
+	ExpiredOrderStatus         OrderStatus = "EXPIRED"
+
+	NewOrderSpecType        OrderSpecType = "NEW"
+	CanceledOrderSpecType   OrderSpecType = "CANCELED"
+	CalculatedOrderSpecType OrderSpecType = "CALCULATED"
+	ExpiredOrderSpecType    OrderSpecType = "EXPIRED"
+	TradeOrderSpecType      OrderSpecType = "TRADE"
+
+	MarkOrderWorkingType     OrderWorkingType = "MARK_PRICE"
+	ContractOrderWorkingType OrderWorkingType = "CONTRACT_PRICE"
+	IndexOrderWorkingType    OrderWorkingType = "INDEX_PRICE"
+)
+
 type BingXResponse[T any] struct {
 	Code     int    `json:"code"`
 	Msg      string `json:"msg"`
