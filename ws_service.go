@@ -155,11 +155,36 @@ type WsOrderUpdateEvent struct {
 
 type WsOrderUpdateHandler func(*WsOrder)
 
-func WsOrderUpdateServe(
-	listenKey string,
+type ListenKeyResponse struct {
+	Key string `json:"listenKey"`
+}
+
+func (c *SpotClient) getListenKey() (string, error) {
+	endpoint := "/openApi/user/auth/userDataStream"
+	params := map[string]interface{}{}
+
+	resp, err := c.client.sendRequest("POST", endpoint, params)
+	if err != nil {
+		return "", err
+	}
+
+	var response ListenKeyResponse
+	err = json.Unmarshal(resp, &response)
+	if err != nil {
+		return "", err
+	}
+	return response.Key, nil
+}
+
+func (c *SpotClient) WsOrderUpdateServe(
 	handler WsOrderUpdateHandler,
 	errHandler ErrHandler,
 ) (doneC, stopC chan struct{}, err error) {
+	listenKey, err := c.getListenKey()
+	if err != nil {
+		return nil, nil, fmt.Errorf("get listen key: %w", err)
+	}
+
 	var wsHandler = func(data []byte) {
 
 		var evMap map[string]interface{}
@@ -178,8 +203,11 @@ func WsOrderUpdateServe(
 			}
 			handler(event.Order)
 		}
-
 	}
 
-	return wsServe(nil, newWsConfig(getAccountWsEndpoint(listenKey)), wsHandler, errHandler)
+	return wsServe(
+		nil,
+		newWsConfig(getAccountWsEndpoint(listenKey)),
+		wsHandler, errHandler,
+	)
 }
