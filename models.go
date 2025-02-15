@@ -84,12 +84,13 @@ func (resp BingXResponse[T]) Error() error {
 }
 
 type SpotOrderRequest struct {
-	Symbol      string  `json:"symbol"`
-	Side        string  `json:"side"` // BUY, SELL
-	Type        string  `json:"type"` // LIMIT, MARKET
-	Quantity    float64 `json:"quantity"`
-	Price       float64 `json:"price,omitempty"`
-	TimeInForce string  `json:"timeInForce,omitempty"` // GTC, IOC, FOK
+	Symbol        string  `json:"symbol"`
+	Side          string  `json:"side"` // BUY, SELL
+	Type          string  `json:"type"` // LIMIT, MARKET
+	Quantity      float64 `json:"quantity"`
+	Price         float64 `json:"price,omitempty"`
+	TimeInForce   string  `json:"timeInForce,omitempty"` // GTC, IOC, FOK
+	ClientOrderID string  `json:"newClientOrderId"`
 }
 
 type SpotOrderResponse struct {

@@ -3,8 +3,9 @@ package bingxgo
 import (
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
+
+	"github.com/shopspring/decimal"
 )
 
 type SpotClient struct {
@@ -43,8 +44,11 @@ func (c *SpotClient) CreateOrder(order SpotOrderRequest) (*SpotOrderResponse, er
 		"symbol":   order.Symbol,
 		"side":     string(order.Side),
 		"type":     string(order.Type),
-		"quantity": strconv.FormatFloat(order.Quantity, 'f', -1, 64),
-		"price":    strconv.FormatFloat(order.Price, 'f', -1, 64),
+		"quantity": decimal.NewFromFloat(order.Quantity).String(),
+		"price":    decimal.NewFromFloat(order.Price).String(),
+	}
+	if order.ClientOrderID != "" {
+		params["newClientOrderId"] = order.ClientOrderID
 	}
 
 	resp, err := c.client.sendRequest("POST", endpoint, params)
