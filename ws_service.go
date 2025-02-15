@@ -3,9 +3,9 @@ package bingxgo
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
+	swissknife "github.com/Sagleft/swiss-knife"
 	"github.com/google/uuid"
 )
 
@@ -22,10 +22,17 @@ func getAccountWsEndpoint(listenKey string) string {
 	return baseAccountWsUrl + listenKey
 }
 
-type Event struct {
-	Code     int         `json:"code"`
-	DataType string      `json:"dataType"`
-	Data     interface{} `json:"data"`
+type Event[dataType any] struct {
+	Code     int      `json:"code"`
+	DataType string   `json:"dataType"`
+	Data     dataType `json:"data"`
+}
+
+type KlineEventData struct {
+	EventTime  int64  `json:"E"`
+	EventType  string `json:"e"`
+	PairSymbol string `json:"s"`
+	Kline      any    `json:"K"`
 }
 
 type WsRequestType string
@@ -82,15 +89,17 @@ func WsKlineServe(
 			return
 		}
 
-		ev := new(Event)
-		err := json.Unmarshal(data, ev)
+		var ev Event[KlineEventData]
+		err := json.Unmarshal(data, &ev)
 		if err != nil {
 			errHandler(err)
 			return
 		}
 
 		if ev.DataType == reqEvent.DataType {
-			_eventData := new(struct {
+			swissknife.PrintObject(ev.Data)
+
+			/*_eventData := new(struct {
 				Symbol string                   `json:"s"`
 				Data   []map[string]interface{} `json:"data"`
 			})
@@ -105,9 +114,11 @@ func WsKlineServe(
 			l, _ := strconv.ParseFloat(_eventData.Data[0]["l"].(string), 64)
 			o, _ := strconv.ParseFloat(_eventData.Data[0]["o"].(string), 64)
 			v, _ := strconv.ParseFloat(_eventData.Data[0]["v"].(string), 64)
-			t := _eventData.Data[0]["T"].(float64)
+			t := _eventData.Data[0]["T"].(float64)*/
 
-			event := &WsKlineEvent{
+			event := &WsKlineEvent{}
+
+			/*event := &WsKlineEvent{
 				Symbol:    _eventData.Symbol,
 				Open:      o,
 				Close:     c,
@@ -116,7 +127,7 @@ func WsKlineServe(
 				Volume:    v,
 				EndTime:   t,
 				Completed: false,
-			}
+			}*/
 
 			if lastEvent == nil {
 				lastEvent = event
@@ -127,9 +138,7 @@ func WsKlineServe(
 			}
 
 			handler(lastEvent)
-
 			lastEvent = event
-
 		}
 
 	}
