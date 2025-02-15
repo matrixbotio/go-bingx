@@ -94,8 +94,6 @@ var wsServe = func(
 				return
 			}
 
-			fmt.Println(string(decodedMsg))
-
 			isPing, err := handlePing(c, decodedMsg)
 			if err != nil {
 				if !silent {
