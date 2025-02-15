@@ -15,7 +15,7 @@ func (c *MarketClient) GetKlines(symbol string, interval string, limit int) ([]K
 		"limit":    strconv.Itoa(limit),
 	}
 
-	resp, err := c.client.sendRequest("GET", "/openApi/swap/v3/quote/klines", params)
+	resp, err := c.client.sendRequest(httpGET, endpointSwapGetKlines, params)
 	if err != nil {
 		return nil, err
 	}

@@ -16,12 +16,11 @@ func NewSpotClient(client *Client) SpotClient {
 }
 
 func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
-	endpoint := "/openApi/spot/v1/account/balance"
 	params := map[string]interface{}{
 		"timestamp": time.Now().UnixMilli(),
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointAccountBalance, params)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +37,6 @@ func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
 }
 
 func (c *SpotClient) CreateOrder(order SpotOrderRequest) (*SpotOrderResponse, error) {
-	endpoint := "/openApi/spot/v1/trade/order"
 	params := map[string]interface{}{
 		"symbol":   order.Symbol,
 		"side":     string(order.Side),
@@ -50,7 +48,7 @@ func (c *SpotClient) CreateOrder(order SpotOrderRequest) (*SpotOrderResponse, er
 		params["newClientOrderId"] = order.ClientOrderID
 	}
 
-	resp, err := c.client.sendRequest("POST", endpoint, params)
+	resp, err := c.client.sendRequest(httpPOST, endpointCreateOrder, params)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +64,10 @@ func (c *SpotClient) CreateOrder(order SpotOrderRequest) (*SpotOrderResponse, er
 	return &bingXResponse.Data, err
 }
 
-func (c *SpotClient) CreateBatchOrders(orders []SpotOrderRequest, isSync bool) ([]SpotOrderResponse, error) {
-	endpoint := "/openApi/spot/v1/trade/batchOrders"
-
+func (c *SpotClient) CreateBatchOrders(
+	orders []SpotOrderRequest,
+	isSync bool,
+) ([]SpotOrderResponse, error) {
 	ordersJSON, err := json.Marshal(orders)
 	if err != nil {
 		return nil, err
@@ -78,7 +77,7 @@ func (c *SpotClient) CreateBatchOrders(orders []SpotOrderRequest, isSync bool) (
 		"sync": isSync,
 	}
 
-	resp, err := c.client.sendRequest("POST", endpoint, params)
+	resp, err := c.client.sendRequest(httpPOST, endpointCreateOrdersBatch, params)
 	if err != nil {
 		return nil, err
 	}
@@ -95,12 +94,11 @@ func (c *SpotClient) CreateBatchOrders(orders []SpotOrderRequest, isSync bool) (
 }
 
 func (c *SpotClient) GetOpenOrders(symbol string) ([]SpotOrder, error) {
-	endpoint := "/openApi/spot/v1/trade/openOrders"
 	params := map[string]interface{}{
 		"symbol": symbol,
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetOpenOrders, params)
 	if err != nil {
 		return nil, err
 	}
@@ -117,13 +115,12 @@ func (c *SpotClient) GetOpenOrders(symbol string) ([]SpotOrder, error) {
 }
 
 func (c *SpotClient) CancelOrder(symbol string, orderId string) error {
-	endpoint := "/openApi/spot/v1/trade/cancel"
 	params := map[string]interface{}{
 		"symbol":  symbol,
 		"orderId": orderId,
 	}
 
-	resp, err := c.client.sendRequest("POST", endpoint, params)
+	resp, err := c.client.sendRequest(httpPOST, endpointCancelOrder, params)
 	if err != nil {
 		return err
 	}
@@ -142,13 +139,12 @@ func (c *SpotClient) CancelOrderByClientOrderID(
 	symbol string,
 	clientOrderID string,
 ) error {
-	endpoint := "/openApi/spot/v1/trade/cancel"
 	params := map[string]interface{}{
 		"symbol":        symbol,
 		"clientOrderID": clientOrderID,
 	}
 
-	resp, err := c.client.sendRequest("POST", endpoint, params)
+	resp, err := c.client.sendRequest(httpPOST, endpointCancelOrder, params)
 	if err != nil {
 		return err
 	}
@@ -164,12 +160,11 @@ func (c *SpotClient) CancelOrderByClientOrderID(
 }
 
 func (c *SpotClient) CancelAllOpenOrders(symbol string) error {
-	endpoint := "/openApi/spot/v1/trade/cancelOpenOrders"
 	params := map[string]interface{}{
 		"symbol": symbol,
 	}
 
-	resp, err := c.client.sendRequest("POST", endpoint, params)
+	resp, err := c.client.sendRequest(httpPOST, endpointCancelAllOrders, params)
 	if err != nil {
 		return err
 	}
@@ -206,9 +201,7 @@ func (c *SpotClient) GetOrderByClientOrderID(
 func (c *SpotClient) getOrderData(
 	params map[string]interface{},
 ) (*SpotOrder, error) {
-	endpoint := "/openApi/spot/v1/trade/query"
-
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetOrderData, params)
 	if err != nil {
 		return nil, err
 	}
@@ -225,12 +218,11 @@ func (c *SpotClient) getOrderData(
 }
 
 func (c *SpotClient) HistoryOrders(symbol string) ([]SpotOrder, error) {
-	endpoint := "/openApi/spot/v1/trade/historyOrders"
 	params := map[string]interface{}{
 		"symbol": symbol,
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetOrdersHistory, params)
 	if err != nil {
 		return nil, err
 	}
@@ -247,7 +239,6 @@ func (c *SpotClient) HistoryOrders(symbol string) ([]SpotOrder, error) {
 }
 
 func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
-	endpoint := "/openApi/spot/v1/market/depth"
 	params := map[string]interface{}{
 		"symbol": symbol,
 	}
@@ -255,7 +246,7 @@ func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
 		params["limit"] = limit
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetOrderBook, params)
 	if err != nil {
 		return nil, err
 	}
@@ -272,7 +263,6 @@ func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
 }
 
 func (c *SpotClient) GetSymbols(symbol ...string) ([]SymbolInfo, error) {
-	endpoint := "/openApi/spot/v1/common/symbols"
 	params := map[string]interface{}{
 		"timestamp": time.Now().UnixMilli(),
 	}
@@ -280,7 +270,7 @@ func (c *SpotClient) GetSymbols(symbol ...string) ([]SymbolInfo, error) {
 		params["symbol"] = symbol[0]
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetSymbols, params)
 	if err != nil {
 		return nil, err
 	}
@@ -301,14 +291,13 @@ func (c *SpotClient) GetHistoricalKlines(
 	interval string,
 	limit int64,
 ) ([]KlineData, error) {
-	endpoint := "/openApi/market/his/v1/kline"
 	params := map[string]interface{}{
 		"symbol":   symbol,
 		"interval": interval,
 		"limit":    limit,
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetKlinesHistory, params)
 	if err != nil {
 		return nil, fmt.Errorf("send: %w", err)
 	}
@@ -335,7 +324,6 @@ func (c *SpotClient) GetHistoricalKlines(
 }
 
 func (c *SpotClient) GetTickers(symbol ...string) (Tickers, error) {
-	endpoint := "/openApi/spot/v1/ticker/24hr"
 	params := map[string]interface{}{
 		"timestamp": time.Now().UnixMilli(),
 	}
@@ -343,7 +331,7 @@ func (c *SpotClient) GetTickers(symbol ...string) (Tickers, error) {
 		params["symbol"] = symbol[0]
 	}
 
-	resp, err := c.client.sendRequest("GET", endpoint, params)
+	resp, err := c.client.sendRequest(httpGET, endpointGetTickers, params)
 	if err != nil {
 		return nil, fmt.Errorf("send: %w", err)
 	}

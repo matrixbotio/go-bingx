@@ -150,10 +150,11 @@ type ListenKeyResponse struct {
 }
 
 func (c *SpotClient) getListenKey() (string, error) {
-	endpoint := "/openApi/user/auth/userDataStream"
-	params := map[string]interface{}{}
-
-	resp, err := c.client.sendRequest("POST", endpoint, params)
+	resp, err := c.client.sendRequest(
+		httpPOST,
+		endpointGetListenKey,
+		map[string]interface{}{},
+	)
 	if err != nil {
 		return "", err
 	}

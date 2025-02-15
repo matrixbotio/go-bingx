@@ -1,7 +1,7 @@
 package bingxgo
 
 import (
-	"strconv"
+	"github.com/shopspring/decimal"
 )
 
 type TradeClient struct {
@@ -14,11 +14,11 @@ func (c *TradeClient) CreateOrder(order OrderRequest) (*OrderResponse, error) {
 		"side":         string(order.Side),
 		"positionSide": string(order.PositionSide),
 		"type":         string(order.Type),
-		"quantity":     strconv.FormatFloat(order.Quantity, 'f', -1, 64),
-		"price":        strconv.FormatFloat(order.Price, 'f', -1, 64),
+		"quantity":     decimal.NewFromFloat(order.Quantity).String(),
+		"price":        decimal.NewFromFloat(order.Price).String(),
 	}
 
-	resp, err := c.client.sendRequest("POST", "/openApi/swap/v2/trade/order", params)
+	resp, err := c.client.sendRequest(httpPOST, endpointSwapCreateOrder, params)
 	if err != nil {
 		return nil, err
 	}

@@ -17,6 +17,29 @@ type OrderSpecType string
 
 type OrderWorkingType string
 
+const (
+	httpGET  = "GET"
+	httpPOST = "POST"
+)
+
+const (
+	endpointAccountBalance    = "/openApi/spot/v1/account/balance"
+	endpointCreateOrder       = "/openApi/spot/v1/trade/order"
+	endpointCreateOrdersBatch = "/openApi/spot/v1/trade/batchOrders"
+	endpointGetOpenOrders     = "/openApi/spot/v1/trade/openOrders"
+	endpointCancelOrder       = "/openApi/spot/v1/trade/cancel"
+	endpointCancelAllOrders   = "/openApi/spot/v1/trade/cancelOpenOrders"
+	endpointGetOrderData      = "/openApi/spot/v1/trade/query"
+	endpointGetOrdersHistory  = "/openApi/spot/v1/trade/historyOrders"
+	endpointGetOrderBook      = "/openApi/spot/v1/market/depth"
+	endpointGetSymbols        = "/openApi/spot/v1/common/symbols"
+	endpointGetKlinesHistory  = "/openApi/market/his/v1/kline"
+	endpointGetTickers        = "/openApi/spot/v1/ticker/24hr"
+	endpointGetListenKey      = "/openApi/user/auth/userDataStream"
+	endpointSwapGetKlines     = "/openApi/swap/v3/quote/klines"
+	endpointSwapCreateOrder   = "/openApi/swap/v2/trade/order"
+)
+
 type Interval string
 
 const (
