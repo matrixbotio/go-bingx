@@ -1,9 +1,10 @@
 package bingxgo
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -72,6 +73,15 @@ func WsKlineServe(
 	var lastEvent *WsKlineEvent
 
 	var wsHandler = func(data []byte) {
+		if data == nil {
+			return
+		}
+
+		if strings.Contains(string(data), "error: ") {
+			errHandler(errors.New(string(data)))
+			return
+		}
+
 		ev := new(Event)
 		err := json.Unmarshal(data, ev)
 		if err != nil {

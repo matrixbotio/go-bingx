@@ -1,7 +1,6 @@
 package bingxgo
 
 import (
-	"encoding/json"
 	"strconv"
 )
 

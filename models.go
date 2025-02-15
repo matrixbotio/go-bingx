@@ -20,25 +20,21 @@ type OrderWorkingType string
 type Interval string
 
 const (
-	Interval1  Interval = "1m"
-	Interval3  Interval = "3m"
-	Interval5  Interval = "5m"
-	Interval15 Interval = "15m"
-	Interval30 Interval = "30m"
-
-	Interval60  Interval = "1h"
-	Interval2h  Interval = "2h"
-	Interval4h  Interval = "4h"
-	Interval6h  Interval = "6h"
-	Interval8h  Interval = "8h"
-	Interval12h Interval = "12h"
-
-	Interval1d Interval = "1d"
-	Interval3d Interval = "3d"
-
-	Interval1w Interval = "1w"
-
-	Interval1M Interval = "1M"
+	Interval1   Interval = "1min"
+	Interval3   Interval = "3min"
+	Interval5   Interval = "5min"
+	Interval15  Interval = "15min"
+	Interval30  Interval = "30min"
+	Interval60  Interval = "60min"
+	Interval2h  Interval = "2hour"
+	Interval4h  Interval = "4hour"
+	Interval6h  Interval = "6hour"
+	Interval8h  Interval = "8hour"
+	Interval12h Interval = "12hour"
+	Interval1d  Interval = "1day"
+	Interval3d  Interval = "3day"
+	Interval1w  Interval = "1week"
+	Interval1M  Interval = "1mon"
 )
 
 const (
