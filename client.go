@@ -14,6 +14,8 @@ import (
 	"time"
 )
 
+const baseURL = "https://open-api.bingx.com"
+
 type Client struct {
 	HTTPClient  *http.Client
 	rateLimiter *RateLimiter
@@ -29,7 +31,7 @@ func NewClient(apiKey, secretKey string) *Client {
 	return &Client{
 		APIKey:     apiKey,
 		SecretKey:  secretKey,
-		BaseURL:    "https://open-api.bingx.com",
+		BaseURL:    baseURL,
 		HTTPClient: &http.Client{Timeout: 10 * time.Second},
 		Debug:      false,
 	}
