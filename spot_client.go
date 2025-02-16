@@ -15,12 +15,20 @@ func NewSpotClient(client *Client) SpotClient {
 	return SpotClient{client: client}
 }
 
+func (c *SpotClient) get(method string, params map[string]interface{}) ([]byte, error) {
+	return c.client.sendRequest(method, httpGET, params)
+}
+
+func (c *SpotClient) post(method string, params map[string]interface{}) ([]byte, error) {
+	return c.client.sendRequest(method, httpPOST, params)
+}
+
 func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
 	params := map[string]interface{}{
 		"timestamp": time.Now().UnixMilli(),
 	}
 
-	resp, err := c.client.get(endpointAccountBalance, params)
+	resp, err := c.get(endpointAccountBalance, params)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +56,7 @@ func (c *SpotClient) CreateOrder(order SpotOrderRequest) (*SpotOrderResponse, er
 		params["newClientOrderId"] = order.ClientOrderID
 	}
 
-	resp, err := c.client.post(endpointCreateOrder, params)
+	resp, err := c.post(endpointCreateOrder, params)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +85,7 @@ func (c *SpotClient) CreateBatchOrders(
 		"sync": isSync,
 	}
 
-	resp, err := c.client.post(endpointCreateOrdersBatch, params)
+	resp, err := c.post(endpointCreateOrdersBatch, params)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +106,7 @@ func (c *SpotClient) GetOpenOrders(symbol string) ([]SpotOrder, error) {
 		"symbol": symbol,
 	}
 
-	resp, err := c.client.get(endpointGetOpenOrders, params)
+	resp, err := c.get(endpointGetOpenOrders, params)
 	if err != nil {
 		return nil, err
 	}
@@ -120,7 +128,7 @@ func (c *SpotClient) CancelOrder(symbol string, orderId string) error {
 		"orderId": orderId,
 	}
 
-	resp, err := c.client.post(endpointCancelOrder, params)
+	resp, err := c.post(endpointCancelOrder, params)
 	if err != nil {
 		return err
 	}
@@ -144,7 +152,7 @@ func (c *SpotClient) CancelOrderByClientOrderID(
 		"clientOrderID": clientOrderID,
 	}
 
-	resp, err := c.client.post(endpointCancelOrder, params)
+	resp, err := c.post(endpointCancelOrder, params)
 	if err != nil {
 		return err
 	}
@@ -164,7 +172,7 @@ func (c *SpotClient) CancelAllOpenOrders(symbol string) error {
 		"symbol": symbol,
 	}
 
-	resp, err := c.client.post(endpointCancelAllOrders, params)
+	resp, err := c.post(endpointCancelAllOrders, params)
 	if err != nil {
 		return err
 	}
@@ -201,7 +209,7 @@ func (c *SpotClient) GetOrderByClientOrderID(
 func (c *SpotClient) getOrderData(
 	params map[string]interface{},
 ) (*SpotOrder, error) {
-	resp, err := c.client.get(endpointGetOrderData, params)
+	resp, err := c.get(endpointGetOrderData, params)
 	if err != nil {
 		return nil, err
 	}
@@ -222,7 +230,7 @@ func (c *SpotClient) HistoryOrders(symbol string) ([]SpotOrder, error) {
 		"symbol": symbol,
 	}
 
-	resp, err := c.client.get(endpointGetOrdersHistory, params)
+	resp, err := c.get(endpointGetOrdersHistory, params)
 	if err != nil {
 		return nil, err
 	}
@@ -246,7 +254,7 @@ func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
 		params["limit"] = limit
 	}
 
-	resp, err := c.client.get(endpointGetOrderBook, params)
+	resp, err := c.get(endpointGetOrderBook, params)
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +278,7 @@ func (c *SpotClient) GetSymbols(symbol ...string) ([]SymbolInfo, error) {
 		params["symbol"] = symbol[0]
 	}
 
-	resp, err := c.client.get(endpointGetSymbols, params)
+	resp, err := c.get(endpointGetSymbols, params)
 	if err != nil {
 		return nil, err
 	}
@@ -297,7 +305,7 @@ func (c *SpotClient) GetHistoricalKlines(
 		"limit":    limit,
 	}
 
-	resp, err := c.client.get(endpointGetKlinesHistory, params)
+	resp, err := c.get(endpointGetKlinesHistory, params)
 	if err != nil {
 		return nil, fmt.Errorf("send: %w", err)
 	}
@@ -331,7 +339,7 @@ func (c *SpotClient) GetTickers(symbol ...string) (Tickers, error) {
 		params["symbol"] = symbol[0]
 	}
 
-	resp, err := c.client.get(endpointGetTickers, params)
+	resp, err := c.get(endpointGetTickers, params)
 	if err != nil {
 		return nil, fmt.Errorf("send: %w", err)
 	}

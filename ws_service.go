@@ -150,7 +150,7 @@ type ListenKeyResponse struct {
 }
 
 func (c *SpotClient) getListenKey() (string, error) {
-	resp, err := c.client.post(
+	resp, err := c.post(
 		endpointGetListenKey,
 		map[string]interface{}{},
 	)
