@@ -51,9 +51,10 @@ func (c *Client) sendRequest(
 	method string,
 	endpoint string,
 	params map[string]interface{},
-) ([]byte, error) {
+	resultPointer any,
+) error {
 	if len(params) == 0 {
-		return nil, fmt.Errorf("params map is nil or empty")
+		return fmt.Errorf("params map is nil or empty")
 	}
 	if c.rateLimiter != nil {
 		c.rateLimiter.Wait(endpoint)
@@ -71,10 +72,13 @@ func (c *Client) sendRequest(
 	// Execute request
 	body, err := c.executeRequest(method, fullURL)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return body, nil
+	if err := json.Unmarshal(body, resultPointer); err != nil {
+		return fmt.Errorf("decode: %w", err)
+	}
+	return nil
 }
 
 func (c *Client) buildParams(params map[string]interface{}) (encoded, raw string) {

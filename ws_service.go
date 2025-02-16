@@ -150,19 +150,15 @@ type ListenKeyResponse struct {
 }
 
 func (c *SpotClient) getListenKey() (string, error) {
-	resp, err := c.post(
+	var response ListenKeyResponse
+	if err := c.post(
 		endpointGetListenKey,
 		map[string]interface{}{},
-	)
-	if err != nil {
+		&response,
+	); err != nil {
 		return "", err
 	}
 
-	var response ListenKeyResponse
-	err = json.Unmarshal(resp, &response)
-	if err != nil {
-		return "", err
-	}
 	return response.Key, nil
 }
 
