@@ -47,6 +47,14 @@ func (c *Client) SetBrokerSourceKey(key string) *Client {
 	return c
 }
 
+func (c *Client) get(method string, params map[string]interface{}) ([]byte, error) {
+	return c.sendRequest(method, httpGET, params)
+}
+
+func (c *Client) post(method string, params map[string]interface{}) ([]byte, error) {
+	return c.sendRequest(method, httpPOST, params)
+}
+
 func (c *Client) sendRequest(
 	method string,
 	endpoint string,

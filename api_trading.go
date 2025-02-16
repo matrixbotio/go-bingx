@@ -18,7 +18,7 @@ func (c *TradeClient) CreateOrder(order OrderRequest) (*OrderResponse, error) {
 		"price":        decimal.NewFromFloat(order.Price).String(),
 	}
 
-	resp, err := c.client.sendRequest(httpPOST, endpointSwapCreateOrder, params)
+	resp, err := c.client.post(endpointSwapCreateOrder, params)
 	if err != nil {
 		return nil, err
 	}
