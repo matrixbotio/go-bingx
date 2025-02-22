@@ -18,11 +18,6 @@ type OrderSpecType string
 type OrderWorkingType string
 
 const (
-	httpGET  = "GET"
-	httpPOST = "POST"
-)
-
-const (
 	endpointAccountBalance    = "/openApi/spot/v1/account/balance"
 	endpointCreateOrder       = "/openApi/spot/v1/trade/order"
 	endpointCreateOrdersBatch = "/openApi/spot/v1/trade/batchOrders"
@@ -38,6 +33,7 @@ const (
 	endpointGetListenKey      = "/openApi/user/auth/userDataStream"
 	endpointSwapGetKlines     = "/openApi/swap/v3/quote/klines"
 	endpointSwapCreateOrder   = "/openApi/swap/v2/trade/order"
+	endpointExtendListenKey   = "/openApi/user/auth/userDataStream"
 )
 
 type Interval string

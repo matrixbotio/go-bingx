@@ -3,6 +3,7 @@ package bingxgo
 import (
 	"errors"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/google/uuid"
@@ -117,7 +118,13 @@ func WsKlineServe(
 		return nil, nil, err
 	}
 
-	return wsServe(initMessage, newWsConfig(getWsEndpoint()), wsHandler, errHandler)
+	return wsServe(
+		initMessage,
+		NewClient("", ""),
+		"",
+		newWsConfig(getWsEndpoint()),
+		wsHandler, errHandler,
+	)
 }
 
 type WsOrder struct {
@@ -149,9 +156,10 @@ type ListenKeyResponse struct {
 	Key string `json:"listenKey"`
 }
 
-func (c *SpotClient) getListenKey() (string, error) {
+func getListenKey(client *Client) (string, error) {
 	var response ListenKeyResponse
-	if err := c.post(
+	if err := client.sendRequest(
+		http.MethodPost,
 		endpointGetListenKey,
 		map[string]interface{}{},
 		&response,
@@ -162,11 +170,15 @@ func (c *SpotClient) getListenKey() (string, error) {
 	return response.Key, nil
 }
 
-func (c *SpotClient) WsOrderUpdateServe(
+func WsOrderUpdateServe(
+	apiKeyPublic string,
+	apiKeySecret string,
 	handler WsOrderUpdateHandler,
 	errHandler ErrHandler,
 ) (doneC, stopC chan struct{}, err error) {
-	listenKey, err := c.getListenKey()
+	client := NewClient(apiKeyPublic, apiKeySecret)
+
+	listenKey, err := getListenKey(client)
 	if err != nil {
 		return nil, nil, fmt.Errorf("get listen key: %w", err)
 	}
@@ -193,6 +205,8 @@ func (c *SpotClient) WsOrderUpdateServe(
 
 	return wsServe(
 		nil,
+		client,
+		listenKey,
 		newWsConfig(getAccountWsEndpoint(listenKey)),
 		wsHandler, errHandler,
 	)

@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gorilla/websocket"
 	jsoniter "github.com/json-iterator/go"
 )
 
 const (
-	wsReadLimit = 655350
+	wsReadLimit            = 655350
+	extendListenKeyTimeout = time.Minute * 40
+	pingListenKeyTimeout   = time.Minute * 30
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -42,8 +45,20 @@ func newWsConfig(endpoint string) *WsConfig {
 	}
 }
 
-var wsServe = func(
+func extendListenKey(client *Client, keyID string) error {
+	var result any
+	return client.sendRequest(
+		http.MethodPut,
+		endpointExtendListenKey,
+		map[string]interface{}{"listenKey": keyID},
+		&result,
+	)
+}
+
+func wsServe(
 	initMessage []byte,
+	client *Client,
+	listenKeyID string,
 	config *WsConfig,
 	handler WsHandler,
 	errHandler ErrHandler,
@@ -51,34 +66,78 @@ var wsServe = func(
 	header := http.Header{}
 	header.Add("Accept-Encoding", "gzip")
 
-	c, _, err := websocket.DefaultDialer.Dial(config.Endpoint, header)
+	wsConn, _, err := websocket.DefaultDialer.Dial(config.Endpoint, header)
 	if err != nil {
 		return nil, nil, err
 	}
 
 	if initMessage != nil {
-		err = c.WriteMessage(websocket.TextMessage, initMessage)
+		err = wsConn.WriteMessage(websocket.TextMessage, initMessage)
 		if err != nil {
 			return nil, nil, err
 		}
 	}
 
-	c.SetReadLimit(wsReadLimit)
+	wsConn.SetReadLimit(wsReadLimit)
 	doneC = make(chan struct{})
 	stopC = make(chan struct{})
+	active := true
+
 	go func() {
 		defer close(doneC)
 		silent := false
+
+		// await stop
 		go func() {
 			select {
 			case <-stopC:
 				silent = true
 			case <-doneC:
 			}
-			c.Close()
+			active = false
+			wsConn.Close()
 		}()
+
+		if listenKeyID != "" {
+			// auto-extend listen-key
+			go func() {
+				for {
+					time.Sleep(extendListenKeyTimeout)
+
+					if !active {
+						return
+					}
+
+					if err := extendListenKey(client, listenKeyID); err != nil {
+						if !silent {
+							errHandler(fmt.Errorf("extend listen key: %w", err))
+						}
+					}
+				}
+			}()
+
+			// periodicaly ping listen-key
+			go func() {
+				for {
+					time.Sleep(pingListenKeyTimeout)
+
+					if !active {
+						return
+					}
+
+					if err := wsConn.WriteMessage(
+						websocket.PingMessage,
+						[]byte("keepalive"),
+					); err != nil && !silent {
+						errHandler(err)
+					}
+				}
+			}()
+		}
+
+		// read messages
 		for {
-			_, message, err := c.ReadMessage()
+			_, message, err := wsConn.ReadMessage()
 			if err != nil {
 				if !silent {
 					errHandler(err)
@@ -87,18 +146,14 @@ var wsServe = func(
 			}
 
 			decodedMsg, err := DecodeGzip(message)
-			if err != nil {
-				if !silent {
-					errHandler(err)
-				}
+			if err != nil && !silent {
+				errHandler(err)
 				return
 			}
 
-			isPing, err := handlePing(c, decodedMsg)
-			if err != nil {
-				if !silent {
-					errHandler(err)
-				}
+			isPing, err := handlePing(wsConn, decodedMsg)
+			if err != nil && !silent {
+				errHandler(err)
 				continue
 			}
 			if isPing {

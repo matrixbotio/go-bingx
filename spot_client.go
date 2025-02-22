@@ -2,6 +2,7 @@ package bingxgo
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/shopspring/decimal"
@@ -20,7 +21,7 @@ func (c *SpotClient) get(
 	params map[string]interface{},
 	resultPointer any,
 ) error {
-	return c.client.sendRequest(httpGET, method, params, resultPointer)
+	return c.client.sendRequest(http.MethodGet, method, params, resultPointer)
 }
 
 func (c *SpotClient) post(
@@ -28,7 +29,7 @@ func (c *SpotClient) post(
 	params map[string]interface{},
 	resultPointer any,
 ) error {
-	return c.client.sendRequest(httpPOST, method, params, resultPointer)
+	return c.client.sendRequest(http.MethodPost, method, params, resultPointer)
 }
 
 func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
