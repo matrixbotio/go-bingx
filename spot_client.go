@@ -1,6 +1,7 @@
 package bingxgo
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -195,7 +196,25 @@ type OrdersHistoryResponse struct {
 	Orders []SpotOrder `json:"orders"`
 }
 
-// HistoryOrders - get orders history. Time in unix ms
+// GetHistoryOrder - get order from trade history. Time in unix timestamp ms
+func (c *SpotClient) GetHistoryOrder(
+	symbol string,
+	orderID int64,
+) (SpotOrder, error) {
+	orders, err := c.HistoryOrders(symbol, 0, 0, orderID)
+	if err != nil {
+		return SpotOrder{}, fmt.Errorf("get history: %w", err)
+	}
+
+	for _, order := range orders {
+		if order.OrderID == orderID {
+			return order, nil
+		}
+	}
+	return SpotOrder{}, errors.New("not found")
+}
+
+// HistoryOrders - get orders history. Time in unix timestamp ms
 func (c *SpotClient) HistoryOrders(
 	symbol string,
 	fromTime int64,
