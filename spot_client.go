@@ -45,7 +45,7 @@ func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
 		return nil, err
 	}
 
-	if response.Data == nil || len(response.Data) == 0 {
+	if len(response.Data) == 0 {
 		return nil, nil
 	}
 	return response.Data["balances"], nil
@@ -191,9 +191,26 @@ func (c *SpotClient) getOrderData(
 	return &response.Data, nil
 }
 
-func (c *SpotClient) HistoryOrders(symbol string) ([]SpotOrder, error) {
-	params := map[string]interface{}{
-		"symbol": symbol,
+// HistoryOrders - get orders history. Time in unix ms
+func (c *SpotClient) HistoryOrders(
+	symbol string,
+	fromTime int64,
+	toTime int64,
+	orderID int64,
+) ([]SpotOrder, error) {
+	params := map[string]any{
+		"symbol":    symbol,
+		"timestamp": time.Now().UnixMilli(),
+	}
+
+	if orderID > 0 {
+		params["orderId"] = orderID
+	}
+	if fromTime > 0 {
+		params["startTime"] = fromTime
+	}
+	if toTime > 0 {
+		params["endTime"] = toTime
 	}
 
 	var response BingXResponse[map[string][]SpotOrder]
@@ -205,15 +222,22 @@ func (c *SpotClient) HistoryOrders(symbol string) ([]SpotOrder, error) {
 		return nil, err
 	}
 
-	if response.Data == nil || len(response.Data) == 0 {
+	if len(response.Data) == 0 {
 		return nil, nil
 	}
-	return response.Data["orders"], nil
+
+	ordersData, isExists := response.Data["orders"]
+	if !isExists {
+		return nil, nil
+	}
+
+	return ordersData, nil
 }
 
 func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
-	params := map[string]interface{}{
-		"symbol": symbol,
+	params := map[string]any{
+		"symbol":    symbol,
+		"timestamp": time.Now().UnixMilli(),
 	}
 	if limit > 0 {
 		params["limit"] = limit
@@ -231,7 +255,7 @@ func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
 }
 
 func (c *SpotClient) GetSymbols(symbol ...string) ([]SymbolInfo, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"timestamp": time.Now().UnixMilli(),
 	}
 	if len(symbol) > 0 {
