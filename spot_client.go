@@ -191,6 +191,10 @@ func (c *SpotClient) getOrderData(
 	return &response.Data, nil
 }
 
+type OrdersHistoryResponse struct {
+	Orders []SpotOrder `json:"orders"`
+}
+
 // HistoryOrders - get orders history. Time in unix ms
 func (c *SpotClient) HistoryOrders(
 	symbol string,
@@ -213,7 +217,7 @@ func (c *SpotClient) HistoryOrders(
 		params["endTime"] = toTime
 	}
 
-	var response BingXResponse[map[string][]SpotOrder]
+	var response BingXResponse[OrdersHistoryResponse]
 	if err := c.get(endpointGetOrdersHistory, params, &response); err != nil {
 		return nil, err
 	}
@@ -222,16 +226,7 @@ func (c *SpotClient) HistoryOrders(
 		return nil, err
 	}
 
-	if len(response.Data) == 0 {
-		return nil, nil
-	}
-
-	ordersData, isExists := response.Data["orders"]
-	if !isExists {
-		return nil, nil
-	}
-
-	return ordersData, nil
+	return response.Data.Orders, nil
 }
 
 func (c *SpotClient) OrderBook(symbol string, limit int) (*OrderBook, error) {
