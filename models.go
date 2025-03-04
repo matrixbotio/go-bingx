@@ -124,7 +124,7 @@ type SpotOrderResponse struct {
 }
 
 type SpotOrder struct {
-	OrderID             int     `json:"orderId"`
+	OrderID             int64   `json:"orderId"`
 	ClientOrderID       string  `json:"clientOrderID"`
 	Symbol              string  `json:"symbol"`
 	Price               string  `json:"price"`
