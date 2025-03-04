@@ -193,17 +193,17 @@ func (c *SpotClient) getOrderData(
 }
 
 type OrdersHistoryResponse struct {
-	Orders []SpotOrder `json:"orders"`
+	Orders []HistoryOrder `json:"orders"`
 }
 
 // GetHistoryOrder - get order from trade history. Time in unix timestamp ms
 func (c *SpotClient) GetHistoryOrder(
 	symbol string,
 	orderID int64,
-) (SpotOrder, error) {
+) (HistoryOrder, error) {
 	orders, err := c.HistoryOrders(symbol, 0, 0, orderID)
 	if err != nil {
-		return SpotOrder{}, fmt.Errorf("get history: %w", err)
+		return HistoryOrder{}, fmt.Errorf("get history: %w", err)
 	}
 
 	for _, order := range orders {
@@ -211,7 +211,7 @@ func (c *SpotClient) GetHistoryOrder(
 			return order, nil
 		}
 	}
-	return SpotOrder{}, errors.New("not found")
+	return HistoryOrder{}, errors.New("not found")
 }
 
 // HistoryOrders - get orders history. Time in unix timestamp ms
@@ -220,7 +220,7 @@ func (c *SpotClient) HistoryOrders(
 	fromTime int64,
 	toTime int64,
 	orderID int64,
-) ([]SpotOrder, error) {
+) ([]HistoryOrder, error) {
 	params := map[string]any{
 		"symbol":    symbol,
 		"timestamp": time.Now().UnixMilli(),

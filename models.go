@@ -123,7 +123,7 @@ type SpotOrderResponse struct {
 	ClientOrderID       string `json:"clientOrderID"`
 }
 
-type SpotOrder struct {
+type OrderBase struct {
 	OrderID             int64   `json:"orderId"`
 	ClientOrderID       string  `json:"clientOrderID"`
 	Symbol              string  `json:"symbol"`
@@ -137,9 +137,18 @@ type SpotOrder struct {
 	Side                string  `json:"side"`
 	Time                int64   `json:"time"`
 	UpdateTime          int64   `json:"updateTime"`
-	Fee                 float64 `json:"fee"`
-	FeeAsset            string  `json:"feeAsset"`
 	AvgPrice            float64 `json:"avgPrice"`
+}
+
+type HistoryOrder struct {
+	OrderBase
+	Fee float64 `json:"fee"`
+}
+
+type SpotOrder struct {
+	OrderBase
+	Fee      string `json:"fee"`
+	FeeAsset string `json:"feeAsset"`
 }
 
 type SpotBalance struct {
