@@ -19,7 +19,7 @@ func NewSpotClient(client *Client) SpotClient {
 
 func (c *SpotClient) get(
 	method string,
-	params map[string]interface{},
+	params map[string]any,
 	resultPointer any,
 ) error {
 	return c.client.sendRequest(http.MethodGet, method, params, resultPointer)
@@ -27,14 +27,14 @@ func (c *SpotClient) get(
 
 func (c *SpotClient) post(
 	method string,
-	params map[string]interface{},
+	params map[string]any,
 	resultPointer any,
 ) error {
 	return c.client.sendRequest(http.MethodPost, method, params, resultPointer)
 }
 
 func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"timestamp": time.Now().UnixMilli(),
 	}
 
@@ -53,7 +53,7 @@ func (c *SpotClient) GetBalance() ([]SpotBalance, error) {
 }
 
 func (c *SpotClient) CreateOrder(order SpotOrderRequest) (*SpotOrderResponse, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":   order.Symbol,
 		"side":     string(order.Side),
 		"type":     string(order.Type),
@@ -83,7 +83,7 @@ func (c *SpotClient) CreateBatchOrders(
 	if err != nil {
 		return nil, err
 	}
-	params := map[string]interface{}{
+	params := map[string]any{
 		"data": string(ordersJSON),
 		"sync": isSync,
 	}
@@ -100,7 +100,7 @@ func (c *SpotClient) CreateBatchOrders(
 }
 
 func (c *SpotClient) GetOpenOrders(symbol string) ([]SpotOrder, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 
@@ -116,7 +116,7 @@ func (c *SpotClient) GetOpenOrders(symbol string) ([]SpotOrder, error) {
 }
 
 func (c *SpotClient) CancelOrder(symbol string, orderId string) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":  symbol,
 		"orderId": orderId,
 	}
@@ -133,7 +133,7 @@ func (c *SpotClient) CancelOrderByClientOrderID(
 	symbol string,
 	clientOrderID string,
 ) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":        symbol,
 		"clientOrderID": clientOrderID,
 	}
@@ -147,7 +147,7 @@ func (c *SpotClient) CancelOrderByClientOrderID(
 }
 
 func (c *SpotClient) CancelAllOpenOrders(symbol string) error {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol": symbol,
 	}
 
@@ -160,7 +160,7 @@ func (c *SpotClient) CancelAllOpenOrders(symbol string) error {
 }
 
 func (c *SpotClient) GetOrder(symbol string, orderID int64) (*SpotOrder, error) {
-	return c.getOrderData(map[string]interface{}{
+	return c.getOrderData(map[string]any{
 		"symbol":    symbol,
 		"orderId":   orderID,
 		"timestamp": time.Now().UnixMilli(),
@@ -171,7 +171,7 @@ func (c *SpotClient) GetOrderByClientOrderID(
 	symbol string,
 	clientOrderID string,
 ) (*SpotOrder, error) {
-	return c.getOrderData(map[string]interface{}{
+	return c.getOrderData(map[string]any{
 		"symbol":        symbol,
 		"clientOrderID": clientOrderID,
 		"timestamp":     time.Now().UnixMilli(),
@@ -179,7 +179,7 @@ func (c *SpotClient) GetOrderByClientOrderID(
 }
 
 func (c *SpotClient) getOrderData(
-	params map[string]interface{},
+	params map[string]any,
 ) (*SpotOrder, error) {
 	var response BingXResponse[SpotOrder]
 	if err := c.get(endpointGetOrderData, params, &response); err != nil {
@@ -292,7 +292,7 @@ func (c *SpotClient) GetHistoricalKlines(
 	interval string,
 	limit int64,
 ) ([]KlineData, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"symbol":   symbol,
 		"interval": interval,
 		"limit":    limit,
@@ -320,7 +320,7 @@ func (c *SpotClient) GetHistoricalKlines(
 }
 
 func (c *SpotClient) GetTickers(symbol ...string) (Tickers, error) {
-	params := map[string]interface{}{
+	params := map[string]any{
 		"timestamp": time.Now().UnixMilli(),
 	}
 	if len(symbol) > 0 {
