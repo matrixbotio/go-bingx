@@ -28,7 +28,7 @@ const (
 	endpointGetOrdersHistory  = "/openApi/spot/v1/trade/historyOrders"
 	endpointGetOrderBook      = "/openApi/spot/v1/market/depth"
 	endpointGetSymbols        = "/openApi/spot/v1/common/symbols"
-	endpointGetKlinesHistory  = "/openApi/market/his/v1/kline"
+	endpointGetKlinesHistory  = "/openApi/spot/v2/market/kline"
 	endpointGetTickers        = "/openApi/spot/v1/ticker/24hr"
 	endpointGetListenKey      = "/openApi/user/auth/userDataStream"
 	endpointSwapGetKlines     = "/openApi/swap/v3/quote/klines"
