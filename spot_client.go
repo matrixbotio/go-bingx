@@ -338,6 +338,9 @@ func (c *SpotClient) GetHistoricalKlines(
 	if err := response.Error(); err != nil {
 		return nil, err
 	}
+	if response.Msg != "" {
+		return nil, errors.New(response.Msg)
+	}
 
 	var result []KlineData
 	for _, data := range response.Data {
