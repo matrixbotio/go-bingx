@@ -287,6 +287,38 @@ func (c *SpotClient) GetSymbols(symbol ...string) ([]SymbolInfo, error) {
 	return response.Data.Symbols, nil
 }
 
+func (c *SpotClient) GetHistoricalCandles(
+	symbol string,
+	interval string,
+	limit int64,
+) ([]KlineData, error) {
+	params := map[string]any{
+		"symbol":   symbol,
+		"interval": interval,
+		"limit":    limit,
+	}
+
+	var response BingXResponse[[]KlineDataRaw]
+	if err := c.get(endpointGetCandlesHistory, params, &response); err != nil {
+		return nil, fmt.Errorf("send: %w", err)
+	}
+
+	if err := response.Error(); err != nil {
+		return nil, err
+	}
+
+	var result []KlineData
+	for _, data := range response.Data {
+		kline, err := parseKlineData(data, interval)
+		if err != nil {
+			return nil, fmt.Errorf("parse: %w", err)
+		}
+
+		result = append(result, kline)
+	}
+	return result, nil
+}
+
 func (c *SpotClient) GetHistoricalKlines(
 	symbol string,
 	interval string,
