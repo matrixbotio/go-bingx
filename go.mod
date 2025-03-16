@@ -1,4 +1,4 @@
-module github.com/Sagleft/go-bingx
+module github.com/matrixbotio/go-bingx
 
 go 1.23.1
 
