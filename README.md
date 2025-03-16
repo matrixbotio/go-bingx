@@ -17,7 +17,7 @@ This repository contains a Go client library for interacting with the BingX API.
 To use this library in your project, you can simply import it into your Go application. Ensure you have Go installed and set up on your machine.
 
 ```bash
-go get github.com/Sagleft/go-bingx
+go get github.com/matrixbotio/go-bingx
 ```
 
 ## Usage
@@ -27,7 +27,7 @@ go get github.com/Sagleft/go-bingx
 First, create a new client instance using your API key and secret key:
 
 ```go
-import "github.com/Sagleft/go-bingx"
+import "github.com/matrixbotio/go-bingx"
 
 client := bingxgo.NewClient("your_api_key", "your_secret_key")
 ```
