@@ -328,6 +328,7 @@ func (c *SpotClient) GetHistoricalKlines(
 		"symbol":   symbol,
 		"interval": interval,
 		"limit":    limit,
+		"endTime":  time.Now().UnixMilli(),
 	}
 
 	var response BingXResponse[[]KlineDataRaw]
